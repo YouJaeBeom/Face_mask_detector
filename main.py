@@ -87,9 +87,12 @@ def main():
 	logging.info(msg="Start inference")
 	camera.start()
 	inference.start()
-	while True:
-		frames = draw_and_show(*output,frame)
-		cv2.imshow('DETECT',frames)
+	while not done:
+		if output == None:
+			pass
+		else:
+			frames = draw_and_show(*output,frame)
+			cv2.imshow('DETECT',frames)
 		key = cv2.waitKey(10)
 		if key == 27:
 			done = True
