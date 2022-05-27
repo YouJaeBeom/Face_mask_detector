@@ -63,7 +63,7 @@ def draw_and_show(box,classes,scores,num,frame):
     return frame
         
 def main():
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
     cap.set(3,WIDTH)
     cap.set(4,HEIGHT)
     while True:
