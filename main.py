@@ -78,7 +78,7 @@ def draw_and_show(box,classes,scores,num,frame):
 def main():
 	global frame
 	global done
-	cam = cv2.VideoCapture(0)
+	cam = cv2.VideoCapture(1)
 	cam.set(3,WIDTH)
 	cam.set(4,HEIGHT)
 	interpret, i_detail, o_detail = model_init(os.path.join(os.getcwd(),model_path))
@@ -87,12 +87,9 @@ def main():
 	logging.info(msg="Start inference")
 	camera.start()
 	inference.start()
-	while not done:
-		if output == None:
-			pass
-		else:
-			frames = draw_and_show(*output,frame)
-			cv2.imshow('DETECT',frames)
+	while True:
+		frames = draw_and_show(*output,frame)
+		cv2.imshow('DETECT',frames)
 		key = cv2.waitKey(10)
 		if key == 27:
 			done = True
