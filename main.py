@@ -1,7 +1,6 @@
 print("Importing library. This might take a while...")
 import numpy as np
-#import tensorflow as tf
-import tflite_runtime.interpreter as tflite
+import tensorflow as tf
 import cv2
 import os
 from threading import Thread
@@ -21,12 +20,7 @@ done = False
 logging.basicConfig(level=logging.INFO,format='%(levelname)s: %(message)s')
 
 def model_init(path):
-	#interpreter = tf.lite.Interpreter(model_path=path)
-	interpreter = tflite.Interpreter(
-	    os.path.join(os.getcwd(), path),
-	    experimental_delegates=[tflite.load_delegate('libedgetpu.so.1')]
-	    )
-	#interpreter.allocate_tensors()
+	interpreter = tf.lite.Interpreter(model_path=path)
 	interpreter.allocate_tensors()
 	input_details = interpreter.get_input_details()
 	output_details = interpreter.get_output_details()
@@ -59,7 +53,6 @@ def get_output(interpreter,output_details,i_detail,cam,shape):
 		scores = interpreter.get_tensor(output_details[2]['index'])
 		num = interpreter.get_tensor(output_details[3]['index'])
 		output = [boxes,classes,scores,num]
-	return output
 
 def draw_and_show(box,classes,scores,num,frame):
 	for i in range(int(num[0])):
@@ -83,24 +76,22 @@ def main():
 	cam.set(3,WIDTH)
 	cam.set(4,HEIGHT)
 	interpret, i_detail, o_detail = model_init(os.path.join(os.getcwd(),model_path))
-	#camera = Thread(target=cam_running,args=(cam,))
-	#get_output(interpret,o_detail,i_detail,cam,i_detail[0]['shape'][1])
-	#inference = Thread(target=get_output,args=(interpret,o_detail,i_detail,cam,i_detail[0]['shape'][1]))
+	camera = Thread(target=cam_running,args=(cam,))
+	inference = Thread(target=get_output,args=(interpret,o_detail,i_detail,cam,i_detail[0]['shape'][1]))
 	logging.info(msg="Start inference")
-	#inference.start()
-	
+	camera.start()
+	inference.start()
 	while not done:
-		logging.info(msg="cam read")
-		
-		ret, frame = cam.read()
-		
-		*output = get_output(interpret,o_detail,i_detail,cam,i_detail[0]['shape'][1])
-		frames = draw_and_show(*output,frame)
-		cv2.imshow('DETECT',frames)
+		if output == None:
+			pass
+		else:
+			frames = draw_and_show(*output,frame)
+			cv2.imshow('DETECT',frames)
 		key = cv2.waitKey(10)
 		if key == 27:
 			done = True
 			logging.info(msg="Exiting")
+			camera.join()
 			inference.join()
 			exit()
 			break
