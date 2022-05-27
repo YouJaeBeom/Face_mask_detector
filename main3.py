@@ -11,6 +11,17 @@ import os
 import logging
 logging.basicConfig(level=logging.INFO,format='%(levelname)s: %(message)s')
 
+
+from flask import Flask, render_template, Response
+import cv2
+
+app = Flask(__name__)
+
+@app.route("/")
+def index() :
+    return render_template('index.html')
+
+
 # .tflite interpreter
 interpreter = tflite.Interpreter(
     os.path.join(os.getcwd(), "ssd_mobilenet_v2_fpnlite.tflite"),
@@ -72,6 +83,9 @@ def main():
         num = interpreter.get_tensor(output_details[3]['index'])
         output = [boxes,classes,scores,num]
         
+
+        
+        
         #### 
 	      # image reshape
         #image = cv2.resize(image, dsize=(320, 320), interpolation=cv2.INTER_AREA)
@@ -87,15 +101,28 @@ def main():
         """if len(image):
             draw_objects(image, objs)"""
         
+        
         frames = draw_and_show(*output, image)
+
+        imgencode = cv2.imencode('.jpg', image)[1]
+        stringData = imgencode.tostring()
+        yield (b'--frame\r\n'
+        b'Content-Type: text/plain\r\n\r\n' + stringData + b'\r\n')
         #image = cv2.cvtColor(image,cv2.COLOR_RGB2BGR)
         cv2.imshow('face detector', frames)
 
         k = cv2.waitKey(30) & 0xff
         if k == 27: # press 'ESC' to quit # ESC exit
             break
+    del(cap)
 
+
+@app.route('/calc')
+def calc() :
+    return Response(main(),
+            mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '__main__':
-    main()
+    #main()
+    app.run(host="localhost", debug=True, threaded=True)
 
