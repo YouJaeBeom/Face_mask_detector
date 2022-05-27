@@ -88,12 +88,10 @@ def main():
 	inference.start()
 	
 	while not done:
-		if output == None:
-			pass
-		else:
-			ret, frame = cam.read()
-			frames = draw_and_show(*output,frame)
-			cv2.imshow('DETECT',frames)
+		logging.info(msg="cam read")
+		ret, frame = cam.read()
+		frames = draw_and_show(*output,frame)
+		cv2.imshow('DETECT',frames)
 		key = cv2.waitKey(10)
 		if key == 27:
 			done = True
