@@ -82,22 +82,22 @@ def main():
 	cam.set(3,WIDTH)
 	cam.set(4,HEIGHT)
 	interpret, i_detail, o_detail = model_init(os.path.join(os.getcwd(),model_path))
-	camera = Thread(target=cam_running,args=(cam,))
+	#camera = Thread(target=cam_running,args=(cam,))
 	inference = Thread(target=get_output,args=(interpret,o_detail,i_detail,cam,i_detail[0]['shape'][1]))
 	logging.info(msg="Start inference")
-	camera.start()
 	inference.start()
+	
 	while not done:
 		if output == None:
 			pass
 		else:
+			ret, frame = cam.read()
 			frames = draw_and_show(*output,frame)
 			cv2.imshow('DETECT',frames)
 		key = cv2.waitKey(10)
 		if key == 27:
 			done = True
 			logging.info(msg="Exiting")
-			camera.join()
 			inference.join()
 			exit()
 			break
