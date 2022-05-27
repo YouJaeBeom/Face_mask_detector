@@ -13,7 +13,7 @@ import os
 
 # .tflite interpreter
 interpreter = tflite.Interpreter(
-    os.path.join(os.getcwd(), "ssd_mobilenet_v2_face_quant_postprocess_edgetpu.tflite"),
+    os.path.join(os.getcwd(), "ssd_mobilenet_v2_fpnlite.tflite"),
     experimental_delegates=[tflite.load_delegate('libedgetpu.so.1')]
     )
 interpreter.allocate_tensors()
