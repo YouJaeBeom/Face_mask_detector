@@ -1,7 +1,7 @@
 import detect
 import tflite_runtime.interpreter as tflite
 import time
-
+import alter
 from PIL import Image
 from PIL import ImageDraw
 import cv2
@@ -119,6 +119,7 @@ def main():
 
 @app.route('/calc')
 def calc() :
+    alter.alert("hi")
     return Response(main(),
             mimetype='multipart/x-mixed-replace; boundary=frame')
 
