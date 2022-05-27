@@ -59,6 +59,7 @@ def get_output(interpreter,output_details,i_detail,cam,shape):
 		scores = interpreter.get_tensor(output_details[2]['index'])
 		num = interpreter.get_tensor(output_details[3]['index'])
 		output = [boxes,classes,scores,num]
+	return output
 
 def draw_and_show(box,classes,scores,num,frame):
 	for i in range(int(num[0])):
@@ -83,13 +84,17 @@ def main():
 	cam.set(4,HEIGHT)
 	interpret, i_detail, o_detail = model_init(os.path.join(os.getcwd(),model_path))
 	#camera = Thread(target=cam_running,args=(cam,))
-	inference = Thread(target=get_output,args=(interpret,o_detail,i_detail,cam,i_detail[0]['shape'][1]))
+	#get_output(interpret,o_detail,i_detail,cam,i_detail[0]['shape'][1])
+	#inference = Thread(target=get_output,args=(interpret,o_detail,i_detail,cam,i_detail[0]['shape'][1]))
 	logging.info(msg="Start inference")
-	inference.start()
+	#inference.start()
 	
 	while not done:
 		logging.info(msg="cam read")
+		
 		ret, frame = cam.read()
+		
+		*output = get_output(interpret,o_detail,i_detail,cam,i_detail[0]['shape'][1])
 		frames = draw_and_show(*output,frame)
 		cv2.imshow('DETECT',frames)
 		key = cv2.waitKey(10)
