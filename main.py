@@ -1,6 +1,6 @@
 print("Importing library. This might take a while...")
 import numpy as np
-import tensorflow as tf
+import tflite_runtime.interpreter as tflite
 import cv2
 import os
 from threading import Thread
@@ -20,7 +20,12 @@ done = False
 logging.basicConfig(level=logging.INFO,format='%(levelname)s: %(message)s')
 
 def model_init(path):
-	interpreter = tf.lite.Interpreter(model_path=path)
+	#interpreter = tf.lite.Interpreter(model_path=path)
+	interpreter = tflite.Interpreter(
+	    os.path.join(os.getcwd(), path),
+	    experimental_delegates=[tflite.load_delegate('libedgetpu.so.1')]
+	    )
+	#interpreter.allocate_tensors()
 	interpreter.allocate_tensors()
 	input_details = interpreter.get_input_details()
 	output_details = interpreter.get_output_details()
