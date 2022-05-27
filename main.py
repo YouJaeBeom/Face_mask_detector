@@ -85,6 +85,7 @@ def main():
 		if output == None:
 			pass
 		else:
+			logging.info(msg="cam read")
 			frames = draw_and_show(*output,frame)
 			cv2.imshow('DETECT',frames)
 		key = cv2.waitKey(10)
