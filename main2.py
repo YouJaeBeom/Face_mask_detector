@@ -8,8 +8,8 @@ import cv2
 import numpy as np
 import time
 import os
-
-
+import logging
+logging.basicConfig(level=logging.INFO,format='%(levelname)s: %(message)s')
 
 # .tflite interpreter
 interpreter = tflite.Interpreter(
@@ -27,7 +27,7 @@ def draw_objects(image, objs):
 
         bbox_point_w = bbox.xmin + ((bbox.xmax-bbox.xmin) // 2)
         bbox_point_h = bbox.ymin + ((bbox.ymax-bbox.ymin) // 2) 
-        
+        logging.info(msg=obj.score)
         cv2.circle(image, (bbox_point_w, bbox.ymax-bbox.ymin), 5, (0,0,255),-1)
         cv2.putText(image, text='%d%%' % (obj.score*100), org=(bbox.xmin, bbox.ymin), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1.0, color=(0, 255, 0), thickness=1, lineType=cv2.LINE_AA)
 
