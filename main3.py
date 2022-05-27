@@ -20,6 +20,9 @@ interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
+WIDTH = 640
+HEIGHT = 480 
+type_list = ['got mask','no mask', 'wear incorrectly']
 # Draws the bounding box and label for each object.
 def draw_objects(image, objs):
     for obj in objs:
@@ -49,8 +52,9 @@ def draw_and_show(box,classes,scores,num,frame):
     return frame
         
 def main():
-    cap = cv2.VideoCapture(0)    
-
+    cap = cv2.VideoCapture(0)
+    cap.set(3,WIDTH)
+    cap.set(4,HEIGHT)
     while True:
         ret, image = cap.read()
         
@@ -83,7 +87,7 @@ def main():
         """if len(image):
             draw_objects(image, objs)"""
         
-        frames = draw_and_show(*output,frame)
+        frames = draw_and_show(*output, image)
         #image = cv2.cvtColor(image,cv2.COLOR_RGB2BGR)
         cv2.imshow('face detector', frames)
 
